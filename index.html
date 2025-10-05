@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机图片</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .loading {
+            color: #666;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">正在加载图片...</div>
+    
+    <script>
+        // 云存储基础URL
+        const cloudBaseUrl = 'https://cfapijpg.hiyy.top/apijpg/';
+        
+        // 桌面版图片列表
+        const desktopImages = [
+            "00002abdbf5ebdf3b36debf40d9b49b734beebe7d201e.jpg",
+            "101526408_p0.webp",
+            "1019057.jpg",
+            "1028681.jpg",
+            "1034459.jpg",
+            "104842378_p0.jpg",
+            "1068697.jpg",
+            "1073171.jpg",
+            "1073172.jpg",
+            "1122644.jpg",
+            "1122676.jpg",
+            "1122677.jpg",
+            "1126251.jpg",
+            "1137025.jpg",
+            "1143648.jpg",
+            "1145884.jpg",
+            "1146917.jpg",
+            "1183239.jpg",
+            "1199480.jpg",
+            "1210000.jpg",
+            "1212896.jpg",
+            "1223350.jpg",
+            "1225642.jpg",
+            "1246580.jpg",
+            "1269108.jpg",
+            "1273320.jpg",
+            "1273542.jpg",
+            "1273726.jpg",
+            "1273765.jpg",
+            "1274520.jpg",
+            "1276128.jpg",
+            "1280294.jpg",
+            "1280311.jpg",
+            "1284325.jpg",
+            "1286409.jpg",
+            "15e671bb5aaf71d854807b9fb4044f88.jpg",
+            "1b649517e1eb33b82410e9cb82fdfc2c.jpg",
+            "1f490139c78035b4305ac144b902e815.jpg",
+            "61275a1c200c902f4077a2c0bf0d1caf.jpg",
+            "68686407_p0.jpg",
+            "725368f266bc149c152eeab3971afbb0.jpg",
+            "7a9159e9e58b7955e6ae6aea27df09d8.jpg",
+            "95184962_p0.webp",
+            "95d60fadb456062ef736a9468ba7f050.jpg",
+            "b69f94a4fa8666f628fc33fd7f3b5f22.jpg",
+            "b9f9d01317a5bc6b1f2311010136e719.jpg",
+            "bd7c2bace1eb2edff8bda296efb070fa.jpg",
+            "ccdeeb39129c936c413b85bb09288574.jpg",
+            "cda7673ed09e765c8c6213244c50bb48.jpg",
+            "cf167418f99f5ada62178db5243a6e77.jpg",
+            "d03088abcce7aac6a7ef17e04e72a9ef.jpg",
+            "d8bd911a53c5e3b15683eb30917eb772.jpg",
+            "dee22edd423b7d4b3fe0f056b8d325d1.jpg",
+            "e030b71d954e3da01dd9d5e78f7180de.jpg",
+            "e0ec5da9f23b3f3989fc9039811460bf.jpg",
+            "iTab-l8qkjl.jpg",
+            "iTab-m953jy.jpg",
+            "iTab-o3qo87.jpg",
+            "iTab-o3r8z9.jpg",
+            "iTab-z87kqv.jpg",
+            "iTab-z8ld5y.jpg",
+            "wallhaven-9mwxl1.jpg"
+        ];
+        
+        // 移动版图片列表
+        const mobileImages = [
+            "0326138121d4b69d9b36c91c88dac32b.jpg",
+            "04fc57c45511669ec2a3763d41a0ca50.jpeg",
+            "0939e59ab146b875ba92796881d7c88f.jpg",
+            "0f10f2a831a96a4b65630acb5cc253c0.jpg",
+            "0ff7b6ee9668189f843d717f3521e293.jpg",
+            "1382e37bf42731bf989cd985d0f44cc3.jpeg",
+            "14326230137f815c9459350a1daee700.jpg",
+            "14627672fe271732cd2eef8ecc4050eb.jpg",
+            "160aa1de7ab44ae21cc2a87f94ab6405.jpeg",
+            "170089966c9117998250a25887982851.jpeg",
+            "252f19997758e48eded44cced3fecc87.jpg",
+            "2558c79cb936eed66dcc11c613471f2e.jpg",
+            "257e0bda1a0d7b40177912ba935e30ba.jpeg",
+            "26b7fea110366c07a3284c66ea362403.jpeg",
+            "27b05a9796dd49494fa3ef8ec40ea79b.jpg",
+            "2bdb928bcb18655e2a4b38cdca3895e7.jpeg",
+            "300e97968abae73900468bb661c8b10d.jpg",
+            "308aedd47b18bb4468e179c5a0daef41.jpeg",
+            "319126aa775bc80125083ad34669f131.jpeg",
+            "342b7d3d988be3c061429b4bfef535ad.jpg",
+            "35172ebb10aaed3b1ca743e1916c422e.jpeg",
+            "3540d0fd58197e792187e9e742f3c9be.jpg",
+            "390a65a225d272c04e74d6f59bf8d319.jpeg",
+            "3ea76be729969af43d90264da2deb92a.jpeg",
+            "3ed6a9c26acf8a079164a540745caca0.jpeg",
+            "408c8a7afbe2c97d121c35258bae7ac9.jpeg",
+            "423660af1d5b9d25fcf36f954491f13e.jpeg",
+            "431c7c9d7131a899855519ee01189f54.jpeg",
+            "446b7cecdece79d1fe0d60734065febb.jpeg",
+            "456158e19caa76087d1b8f361a7a354d.jpg",
+            "476a0d2c5eb1441fdfe82d7466e9ea9e.jpeg",
+            "4d58d671a15a726be86a831efbb0edb1.jpeg",
+            "4de17d86f85bce3c856a2e4710d59934.jpg",
+            "4e34082c45df93bffaca9178f19438a9.jpeg",
+            "5472542c30ed8e0a60567b0df655894b.jpg",
+            "551af904974c3d700f911ff2fcbeec9b.jpg",
+            "5554742becde1a8052329182136d4935.jpg",
+            "567913e20f06f566033a66885660ed07.jpg",
+            "58658ad0d307428c789664e213868d13.jpg",
+            "591e0a0a74cb2cf7e7df125b0a8b9f82.jpg",
+            "59645446d4ba0db39853e36c5e24fb28.jpeg",
+            "606476d0cfe0a7114d6ce3a7fd30ec7a.jpg",
+            "65823202cc25e65b5a7422e8b2adade4.jpeg",
+            "674b4426c3810f31c2c8576b9d2d2d57.jpg",
+            "6b453acd45fc2301582bca15719a4b24.jpeg",
+            "6cbcb697bc49d703bc2f1acb237f4ebe.jpg",
+            "722a6213bc60a73984f8abf4eb6dfd31.jpeg",
+            "73b1cf84aa85cb751c6a5ed539a2f637.jpeg",
+            "7a5fd82420decf4c99214cd9da86625b.jpeg",
+            "7b52e922d02859eb2a21ea413b2fb75f.jpg",
+            "803319a6a6c91d05cf42027b567a991b.jpg",
+            "81f77a3096963c40da23f909d2620f5f.jpeg",
+            "82d583db2daafb5c1785b647efb752f6.jpeg",
+            "835e38955b2c6ec7dfe4f04ef6adc412.jpg",
+            "8420819ec56659c448267f780fbba6d9.jpeg",
+            "880a520cb8ac1deafc4a3f8af47f1879.jpeg",
+            "893396cb56a486d7dce419e2c9c884dc.jpg",
+            "8991c1a3136d920e8178aa0ebb45538c.jpg",
+            "8cfb993bda42bea6cd066f7c78d33089.jpg",
+            "8e9b73db1e51fbaad1ba8ff9ff457aec.jpeg",
+            "8eb06e63b06366571a6aa2ecfe0aa782.jpg",
+            "958386acbd121f58633d423f1bcdfd09.jpeg",
+            "968c8cfdd894690d03e4d9bd94259e62.jpg",
+            "96d15a339fc29416743f67fc8c5a523b.jpeg",
+            "985cfedebf849856d0cff98225697cbb.jpeg",
+            "986ffb6d554ba2606588f23fa6d6b91d.jpeg",
+            "99bc1870f06250b728deeaa88c9ccacf.jpeg",
+            "9c7a1c98055f3041f4d14ffdea4add1b.jpg",
+            "IMG_20240413_090715.jpg",
+            "a1e63f2248c9ff76ed9b02b6d7375181.jpeg",
+            "a2355edf6a1a05ee2c1a47352acf84d3.jpg",
+            "a373447bd68ca88cd7c32269884039af.jpg",
+            "a416cab99bb6c35b784ede850bbe61db.jpeg",
+            "a79d1fc351209e29c12a72c2074f32e6.jpg",
+            "a899cecf2ec0477197fdf78fa063a250.jpeg",
+            "aa331a1f74e3b122f7acdfecd8f2b337.jpg",
+            "aad3fdb8d46b5a2583c42c6c742a9734.jpg",
+            "acdfcff7e795e0ce1cde03ebc1b5e5f6.jpeg",
+            "add55c932a777c01ff75971c23c0f4dc.jpg",
+            "b083dc00f38bc12cdb95e82ed8db3b32.jpeg",
+            "b2231000769b3a6459c8ce9234010d39.jpg",
+            "b4440ed002b5146d1864d4bd3899241e.jpg",
+            "b8ffea7b8f4009bb234219621a7566b6.jpg",
+            "bf3f78c2f2d07e66d39ceacdf2c819dc.jpeg",
+            "c12bf2853806604e6d0c3392077090de.jpeg",
+            "c18c79f62d8b29a6f5d78783567d8249.jpg",
+            "c5022f3a0c1525b027516f225f4b929e.jpeg",
+            "c5a6846c25fd889c2e68d2311e2318aa.jpeg",
+            "c7e20ae353fdb1c873df466981988f6e.jpeg",
+            "c7e6f1314e8c49a679657488b1e2285e.jpg",
+            "c7f273b6410789019a569f06078ea378.jpg",
+            "c9306288f1c94a3441c43f3c24306eb1.jpeg",
+            "ca4303d4933e8713d5daef63ec1ca72e.jpg",
+            "cb327f2abbf1feb9d4cb3ec145a2aab8.jpg",
+            "cb91d63fb55734a0298a9c7f2c957e6b.jpeg",
+            "cd9a9661f893f4aa41bcfcb1f8ba12bc.jpeg",
+            "ce251c08fd861d4034fc393efcb94190.jpg",
+            "cf167418f99f5ada62178db5243a6e77.jpg",
+            "cfa9ed375a276cb47baeef6560458b0c.jpg",
+            "d1672f753e37e1a569cca2e8ef55c139.jpg",
+            "d1a4f319d44cbb1778c570bb2c021d87.jpg",
+            "d510890c2b0297886195dcf4dc468113.jpeg",
+            "d6decd8806a9b0a5842b692b2b8627fe.jpg",
+            "d85eb811719cfb659a50ddd98dacc682.jpg",
+            "d9d211e08264c31b9bb50d2272242c52.jpeg",
+            "da0b6851b2a4cbcf27e9c48a56ada0f9.jpeg",
+            "dbaabe65924b4c5f334295b90b696ef3.jpg",
+            "ddc9a58cf87f41b1e581badef8dbddf6.jpg",
+            "ded3fe3a3a1991812f1de9f848770c6a.jpeg",
+            "e0edf2a5277e8f3d672d1f4acb882aff.jpg",
+            "e588b82f30472ac54757b2bfeac866a9.jpeg",
+            "e6e68ba9a9b9cbee0b2bd88edb2b71dc.jpeg",
+            "e78a236ba479530763fc08866633e20c.jpeg",
+            "e963782e88f5d4e65c604df95184f478.jpg",
+            "e9e59791b5f9c15b512590984ad83e34.jpg",
+            "f162314db6e8ee34e35aa6c118cd57a2.jpeg",
+            "f514ca9fcc106ee90d46413bbde28cad.jpeg",
+            "f80fdaae6301d283b202694e565dc628.jpg",
+            "fabe40fa38d2e6b79aa3fa5a633172ec.jpeg"
+        ];
+        
+        // 检测设备类型
+        function detectDeviceType() {
+            const userAgent = navigator.userAgent;
+            return /Mobile|Android|Silk|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+        }
+        
+        // 生成随机图片URL
+        function getRandomImageUrl() {
+            const isMobile = detectDeviceType();
+            const imageList = isMobile ? mobileImages : desktopImages;
+            
+            if (imageList.length === 0) {
+                document.querySelector('.loading').textContent = '没有找到可用图片';
+                return null;
+            }
+            
+            const randomIndex = Math.floor(Math.random() * imageList.length);
+            const randomImageName = imageList[randomIndex];
+            return cloudBaseUrl + randomImageName;
+        }
+        
+        // 页面加载时自动重定向到随机图片
+        window.onload = function() {
+            const randomImageUrl = getRandomImageUrl();
+            if (randomImageUrl) {
+                window.location.href = randomImageUrl;
+            }
+        };
+    </script>
+</body>
+</html>
